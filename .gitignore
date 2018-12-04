@@ -1,0 +1,26 @@
+*.class
+*.iml
+.idea
+.vscode
+.classpath
+.factorypath
+.project
+.settings
+project
+target
+logs
+dependency-reduced-pom.xml
+server/conf/phone-verification-service*.yml
+server/src/test/resources/phone-verification-service-test.yml
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
