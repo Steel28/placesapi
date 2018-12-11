@@ -9,6 +9,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
+import java.util.UUID;
+
 import static org.junit.Assert.assertEquals;
 
 
@@ -47,5 +49,13 @@ public class PlacesResourceTest {
                 "]", listBody, false);
         assertEquals(200, responseList.getStatus());
     }
+
+    @Test
+    public void testDeleteNoFound(){
+
+        final Response response = resources.target("/places/d1508b3d-1e7f-4d63-a13f-f7d0dff98503").request().delete();
+        assertEquals(404, response.getStatus());
+    }
+
 }
 
