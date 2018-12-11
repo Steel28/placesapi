@@ -6,6 +6,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import static org.junit.Assert.assertEquals;
 
@@ -16,16 +18,34 @@ public class PlacesResourceTest {
             .addResource(new PlacesResource())
             .build();
     @Test
-    public void test() throws JSONException {
+    public void testInitiallyNoPlaces() throws JSONException {
         final Response response = resources.target("/places").request().get();
         String body = response.readEntity(String.class);
+        JSONAssert.assertEquals("[]", body, false);
+        assertEquals(200, response.getStatus());
+
+    }
+
+    @Test
+    public void testAddOnePlace() throws JSONException {
+
+        final Form formData = new Form();
+        formData.param("name", "El Corral");
+        final Response response = resources.target("/places").request().post(Entity.form(formData));
+        assertEquals(201, response.getStatus());
+        String createBody = response.readEntity(String.class);
+        JSONAssert.assertEquals("{" +
+                "        \"name\": \"El Corral\"" +
+                "    }", createBody, false);
+
+        final Response responseList = resources.target("/places").request().get();
+        String listBody = responseList.readEntity(String.class);
         JSONAssert.assertEquals("[" +
                 "    {" +
                 "        \"name\": \"El Corral\"" +
                 "    }" +
-                "]", body, false);
-        assertEquals(200, response.getStatus());
-
+                "]", listBody, false);
+        assertEquals(200, responseList.getStatus());
     }
 }
 
