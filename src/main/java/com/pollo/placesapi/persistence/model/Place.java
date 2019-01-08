@@ -1,4 +1,4 @@
-package com.pollo.placesapi;
+package com.pollo.placesapi.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

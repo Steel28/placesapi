@@ -1,4 +1,4 @@
-package com.pollo.placesapi;
+package com.pollo.placesapi.configuration;
 
 import io.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
