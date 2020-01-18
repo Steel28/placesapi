@@ -1,21 +1,18 @@
 package com.pollo.placesapi;
 
+import com.pollo.placesapi.persistence.InMemoryRepository;
+import com.pollo.placesapi.persistence.model.Place;
+import com.pollo.placesapi.resources.PlacesResource;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import javax.swing.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
-import java.util.UUID;
-
-import static javax.print.attribute.standard.MediaSizeName.A;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -24,7 +21,7 @@ import static org.junit.Assert.assertThat;
 public class PlacesResourceTest {
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()
-            .addResource(new PlacesResource())
+            .addResource(new PlacesResource(new InMemoryRepository()))
             .build();
     @Test
     public void testInitiallyNoPlaces() throws JSONException {

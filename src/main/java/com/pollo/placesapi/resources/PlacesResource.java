@@ -1,4 +1,9 @@
-package com.pollo.placesapi;
+package com.pollo.placesapi.resources;
+
+import com.pollo.placesapi.persistence.PlacesRepository;
+import com.pollo.placesapi.persistence.model.Location;
+import com.pollo.placesapi.persistence.model.Place;
+import com.pollo.placesapi.persistence.model.Review;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -13,11 +18,15 @@ import java.util.*;
 @Produces(MediaType.APPLICATION_JSON)
 public class PlacesResource {
 
-	final Map<String,Place> places = new HashMap<>();
+	private final PlacesRepository repository;
+
+	public PlacesResource(PlacesRepository repository){
+		this.repository = repository;
+	}
 
 	@GET
 	public Response getPlaces(){
-		return Response.ok(places.values()).build();
+		return Response.ok(repository.list()).build();
 	}
 
 	@POST
@@ -29,7 +38,7 @@ public class PlacesResource {
 		final Location location = new Location(lat, lng);
 
 		final Place place = new Place(id, name, location);
-		places.put(id, place);
+		repository.add(place);
 		return Response.status(Status.CREATED).entity(place).build();
 	}
 
@@ -37,12 +46,10 @@ public class PlacesResource {
 	@DELETE
 	@Path("{id}")
 	public Response deletePlace(@PathParam("id") final String id){
-		if (!places.containsKey(id)){
-			return Response.status(Status.NOT_FOUND).build();
-		}
-
-        places.remove(id);
-		return Response.status(Status.NO_CONTENT).build();
+		return repository.find(id).map(place -> {
+			repository.remove(id);
+			return Response.status(Status.NO_CONTENT).build();
+		}).orElse(Response.status(Status.NOT_FOUND).build());
 	}
 
 	@POST
@@ -50,28 +57,21 @@ public class PlacesResource {
 	public Response addReview(@PathParam("id") final String id,
 							  @NotNull @Max(value= 5) @Min(value=1) @FormParam("score") Integer score,
 							  @FormParam("comment") String comment){
-		if (!places.containsKey(id)){
-			return Response.status(Status.NOT_FOUND).build();
-		}
-
-		final Place place = places.get(id);
-		final Review review = new Review(score, comment);
-		place.addReview(review);
-		return Response.status(Status.CREATED).entity(review).build();
+		return repository.find(id).map(place -> {
+			final Review review = new Review(score, comment);
+			place.addReview(review);
+			return Response.status(Status.CREATED).entity(review).build();
+		}).orElse(Response.status(Status.NOT_FOUND).build());
 	}
 
 	@GET
 	@Path("{id}/reviews")
 	public Response getReviews(@PathParam("id") final String id){
-		if (!places.containsKey(id)){
-			return Response.status(Status.NOT_FOUND).entity("{" +
-					"    \"errors\": [" +
-					"        \"place not found\"" +
-					"    ]" +
-					"}").build();
-		}
-
-		final Place place = places.get(id);
-		return Response.status(Status.OK).entity(place.getReviews()).build();
+		return repository.find(id).map(place -> Response.status(Status.OK).entity(place.getReviews()).build())
+				.orElse(Response.status(Status.NOT_FOUND).entity("{" +
+				"    \"errors\": [" +
+				"        \"place not found\"" +
+				"    ]" +
+				"}").build());
 	}
 }
