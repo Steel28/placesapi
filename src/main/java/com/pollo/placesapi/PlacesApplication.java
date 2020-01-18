@@ -33,7 +33,7 @@ public class PlacesApplication extends Application<PlacesConfiguration> {
 
 		CodecRegistry pojoCodecRegistry = fromRegistries(fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-		MongoClient mongoClient = MongoClients.create(
+		final MongoClient mongoClient = MongoClients.create(
 				MongoClientSettings.builder()
 						.codecRegistry(pojoCodecRegistry)
 						.applyToClusterSettings(builder ->
