@@ -23,10 +23,14 @@ public class Place {
     }
 
     public Place(String id, String name, Location location) {
+       this(id, name, location, new ArrayList<>());
+    }
+
+    public Place(String id, String name, Location location, List<Review> reviews) {
         this.name = name;
         this.id = id;
         this.location = location;
-        this.reviews = new ArrayList<>();
+        this.reviews = reviews;
     }
 
     public void addReview(Review review){
@@ -62,8 +66,6 @@ public class Place {
     public Location getLocation() {
         return location;
     }
-
-
 
 }
 
