@@ -9,6 +9,8 @@ import com.pollo.placesapi.persistence.PlacesRepository;
 import com.pollo.placesapi.persistence.model.Place;
 import org.bson.Document;
 
+import static com.mongodb.client.model.Filters.*;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,11 +44,18 @@ public class MongoRepository implements PlacesRepository {
 
     @Override
     public Optional<Place> find(String id) {
-        return Optional.empty();
+        PlaceMongo result = collection.find(eq("idPublic", id)).first();
+
+        Optional<Place> place = (result != null) ?  Optional.of(result.toPlace()) : Optional.empty();
+
+        return place;
+
     }
 
     @Override
     public void remove(String id) {
+
+        collection.deleteOne(eq("idPublic", id));
 
     }
 }
